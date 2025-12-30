@@ -6,7 +6,7 @@ This repository contains code for a custom MIDI controller made from a piece of 
 
 ## Flora + Accelerometer
 
-In this repository are two files, one that runs on an RPi and one that runs on an Adafruit Flora. The RPi and the Flora communicate through Serial Peropheral Interface (SPI) in order to coordinate.
+In this repository are two files, one that runs on an RPi and one that runs on an Adafruit Flora. The RPi and the Flora communicate through Serial Peripheral Interface (SPI) in order to coordinate.
 
 Largely, the Processing code written for the Flora is repsonsible for interpreting the data from the LSM303 accelerometer module. This module can detect motion in X, Y and Z dimensions. In our case, a quick motion in the negative Y direction shifts the MIDI notes corresponding to the 4 frets physically present on the instrument up by 4 fret positions, as they would appear on a traditional guitar neck. A motion in the opposite direction shifts back down the "imaginary" guitar neck, so you are playing lower notes again. This is analogous to the octave up / down buttons you might find on an off-the-shelf MIDI controller.
 
