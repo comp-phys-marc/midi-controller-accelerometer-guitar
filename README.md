@@ -14,7 +14,7 @@ A motion in the positive x direction is interpreted more granularly. After a cut
 
 ## Raspberry Pi
 
-The Python code written for the RPi is responsible for fetching the position and any bend extent from the Flora over SPI. It is also responsible for decoding the current note(s) that are being played on the neck by combining information about the position, bend extent and signals read from the 6 strings. A low voltage is swept across eacn of the 4 frets in a time-multiplexed scanning pattern, and the voltage on each string is read in a loop. This allows us to find which note(s) are played at any given time, by virtue of the fact that both the frets and strings are conductive, and that they make contact when a string is pressed against the fretboard. The RPi behaves as a USB MIDI controller and starts / stops the correpsonding notes accordingly.
+The Python code written for the RPi is responsible for fetching the position and any bend extent from the Flora over SPI. It is also responsible for decoding the current note(s) that are being played on the neck by combining information about the position, bend extent and signals read from the 6 strings. A low voltage is swept across each of the 4 frets in a time-multiplexed scanning pattern, and the voltage on each string is read in a loop. This allows us to find which note(s) are played at any given time, by virtue of the fact that both the frets and strings are conductive, and that they make contact when a string is pressed against the fretboard. The RPi behaves as a USB MIDI controller and starts / stops the correpsonding notes accordingly.
 
 # Photos
 
