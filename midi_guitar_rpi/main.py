@@ -1,11 +1,8 @@
 import spidev
 import time
-import board
-import digitalio
-import usb_midi
-import adafruit_midi
-from adafruit_midi.note_on import NoteOn
-from adafruit_midi.note_off import NoteOff
+import copy
+import RPi.GPIO as gpio
+import mido
 
 # TODO: calibrate bend multiplier
 MULTIPLIER = 1 / 50
@@ -15,11 +12,11 @@ bend = 0
 
 # SPI SETUP
 
-CE0 = board.GP10
-CE1 = board.GP11
-MOSI = board.PG12
-MISO = board.GP13
-SCLK = board.GP14
+CE0 = 24
+CE1 = 26
+MOSI = 19
+MISO = 21
+SCLK = 23
 
 # Open SPI bus 0, device (CS) 0
 spi = spidev.SpiDev()
@@ -30,39 +27,46 @@ spi.max_speed_hz = 50000
 spi.mode = 0
 
 #  MIDI setup as MIDI out device
-midi = adafruit_midi.MIDI(midi_out=usb_midi.ports[1], out_channel=0)
+midi_ports = mido.get_output_names()
+print("Available MIDI output ports:", midi_ports)
+
+for port in midi_ports:
+    if 'fluid' in port.lower():
+        try:
+            midi = mido.open_output(port)
+        except IOError:
+            print("Could not open FluidSynth port. Make sure fluidsynth is running.")
+            exit()
+
+gpio.setmode(gpio.BOARD)
 
 fret_pins = [
-    board.GP26,
-    board.GP27,
-    board.GP28,
-    board.GP29
+    32,
+    36,
+    33,
+    31
 ]
 
 string_pins = [
-    board.GP0,
-    board.GP2,
-    board.GP3,
-    board.GP1,
-    board.GP4,
-    board.GP5
+    11,
+    13,
+    15,
+    12,
+    16,
+    18
 ]
 
 string_inputs = []
 
 for pin in string_pins:
-    string_pin = digitalio.DigitalInOut(pin)
-    string_pin.direction = digitalio.Direction.INPUT
-    string_pin.pull = digitalio.Pull.UP
-    string_inputs.append(string_pin)
+    gpio.setup(pin, gpio.IN)
+    string_inputs.append(pin)
 
 fret_outputs = []
 
 for pin in fret_pins:
-    fret_pin = digitalio.DigitalInOut(pin)
-    fret_pin.direction = digitalio.Direction.OUTPUT
-    fret_pin.pull = digitalio.Pull.UP
-    fret_outputs.append(fret_pin)
+    gpio.setup(pin, gpio.OUT)
+    fret_outputs.append(pin)
 
 # array of default MIDI notes
 midi_notes = [
@@ -95,7 +99,7 @@ midi_notes = [
     65,  # F
     66,  # F#
     67,  # G
-    68   # G#
+    68  # G#
 ]
 
 try:
@@ -108,6 +112,7 @@ try:
         [False, False, False, False],
         [False, False, False, False]
     ]
+    last_fret_found = copy.deepcopy(fret_found)
 
     while True:
         # Debounce
@@ -162,29 +167,31 @@ try:
             # If a note is pressed...
             for note_index in note_indices:
                 # send the MIDI note, modified by neck position and any bend
-                midi.send(NoteOn(midi_notes[i] + 3 * position + bend * MULTIPLIER, 120))
+                print(f"playing note {midi_notes[note_index]}")
+                midi.send(mido.Message('note_on', note=midi_notes[note_index] + 3 * position + bend * MULTIPLIER, velocity=120))
+                time.sleep(0.1)
+                midi.send(mido.Message('note_off', note=midi_notes[note_index] + 3 * position + bend * MULTIPLIER))
 
-            # If a string is released...
-            for i in range(6):
-                for j in range(4):
-                    if last_fret_found[i][j] == True and fret_found[i][j] == False:
-                        # stop sending the MIDI note
-                        midi.send(NoteOff(midi_notes[i] + 3 * position + bend * MULTIPLIER, 120))
+            last_fret_found = copy.deepcopy(fret_found)
 
         else:
             # Scan to next fret
-            pos = 0
-            for fret_pin in fret_pins:
+            for pos, fret_pin in enumerate(fret_pins):
+                print(f"fret {fret_pin} low")
                 if pos == low_pos:
-                    fret_pin.value = False
+                    gpio.output(fret_pin, gpio.LOW)
                 else:
-                    fret_pin.value = True
+                    gpio.output(fret_pin, gpio.HIGH)
 
             # Read the input from the mini guitar neck (float high, active low, due to pull-up)
             for i in range(6):
-                input = string_inputs[i]
-                if not input.value:
+                inp = string_inputs[i]
+                if gpio.input(inp):
+                    print(f"string {i} pressed!")
                     fret_found[i][low_pos] = True
+                else:
+                    fret_found[i][low_pos] = False
 
 except KeyboardInterrupt:
     spi.close()
+    gpio.cleanup()
