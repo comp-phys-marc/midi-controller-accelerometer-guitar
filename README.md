@@ -16,6 +16,19 @@ A motion in the positive x direction is interpreted more granularly. After a cut
 
 The Python code written for the RPi is responsible for fetching the position and any bend extent from the Flora over SPI. It is also responsible for decoding the current note(s) that are being played on the neck by combining information about the position, bend extent and signals read from the 6 strings. A low voltage is swept across eacn of the 4 frets in a time-multiplexed scanning pattern, and the voltage on each string is read in a loop. This allows us to find which note(s) are played at any given time, by virtue of the fact that both the frets and strings are conductive, and that they make contact when a string is pressed against the fretboard. The RPi behaves as a USB MIDI controller and starts / stops the correpsonding notes accordingly.
 
+To play the guitar, install `FluidSyth` and move the soundfont provided in `./midi_guitar_flora`, or whatever soundfont you like, onto the RPi.
+Install `pulseaudio`. Then run:
+
+```
+fluidsynth -a alsa -m alsa_seq -g 1.0 <path_to_sf2>/60s_Rock_Guitar.SF2 &
+```
+
+Next, run `main.py` on the Pi.
+
+# Project Status
+
+[!WARNING] This is still in debug mode! While the basics work, it is a little finicky to play.
+
 # Photos
 
 ![signal-2025-12-29-210033](https://github.com/user-attachments/assets/33b4c451-1a4a-4857-acd1-b6221ea26c6a)
@@ -23,4 +36,3 @@ The Python code written for the RPi is responsible for fetching the position and
 ![signal-2025-12-29-210031](https://github.com/user-attachments/assets/96dcfaa6-8937-4e93-bdbb-2470fb5bc91c)
 
 ![signal-2025-12-29-210028](https://github.com/user-attachments/assets/cf7c0b90-d2d2-4f73-86f5-48594a28ce34)
-
