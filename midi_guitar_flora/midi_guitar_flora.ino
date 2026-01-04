@@ -15,10 +15,10 @@ Adafruit_LSM303_Accel_Unified accel = Adafruit_LSM303_Accel_Unified(54321);
 /* Z should correspond to walking back and forth. X for bends and Y for changing fret positions. */
 
 /* TODO: fine tune sensor sensitivities. */
-#define Y_SENSITIVITY = 10;
-#define X_SENSITIVITY = 10;
+int Y_SENSITIVITY = 10;
+int X_SENSITIVITY = 10;
 
-#define MULTIPLIER = 1;
+int MULTIPLIER = 1;
 
 int position = 0;
 bool pos = true;
@@ -123,7 +123,7 @@ void setupSPI(void) {
 }
 
 void positionAndBend(float x, float y) {
-  if pos {
+  if (pos) {
     /* Negative y dimension increases fret position. */
     if (y > Y_SENSITIVITY) {
       position = position - 1;
@@ -139,13 +139,13 @@ void positionAndBend(float x, float y) {
     }
     position = int(position);
 
-    spi_transfer(char(position));
+    SPI.transfer(char(position));
 
   } else {
     int extent = 0;
 
-    if ((event.acceleration.x > X_SENSITIVITY) || (event.acceleration.x < - X_SENSITIVITY)) {
-      extent = event.acceleration.x;
+    if ((x > X_SENSITIVITY) || (x < - X_SENSITIVITY)) {
+      extent = x;
     }
 
     /* Scale the bend extent. */
@@ -160,7 +160,7 @@ void positionAndBend(float x, float y) {
     }
     extent = int(extent);
 
-    spi_transfer(char(extent));
+    SPI.transfer(char(extent));
   }
 }
 
@@ -198,7 +198,7 @@ void loop(void) {
     accel.getEvent(&event);
 
     /* Display the results (acceleration is measured in m/s^2) */
-    prinntAccelData(event.acceleration.x, event.acceleration.y, event.acceleration.z);
+    printAccelData(event.acceleration.x, event.acceleration.y, event.acceleration.z);
 
     /* Calculate and communicate position, any bend extent. */
     positionAndBend(event.acceleration.x, event.acceleration.y);
