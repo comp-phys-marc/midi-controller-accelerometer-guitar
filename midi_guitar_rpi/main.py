@@ -30,13 +30,19 @@ spi.mode = 0
 midi_ports = mido.get_output_names()
 print("Available MIDI output ports:", midi_ports)
 
+found = False
 for port in midi_ports:
     if 'fluid' in port.lower():
+        found = True
         try:
             midi = mido.open_output(port)
         except IOError:
             print("Could not open FluidSynth port. Make sure fluidsynth is running.")
             exit()
+
+if not found:
+    print("Could not find FluidSynth port. Make sure fluidsynth is running.")
+    exit()
 
 gpio.setmode(gpio.BOARD)
 
@@ -59,7 +65,7 @@ string_pins = [
 string_inputs = []
 
 for pin in string_pins:
-    gpio.setup(pin, gpio.IN)
+    gpio.setup(pin, gpio.IN, pull_up_down=gpio.PUD_DOWN)
     string_inputs.append(pin)
 
 fret_outputs = []
@@ -103,7 +109,7 @@ midi_notes = [
 ]
 
 try:
-    low_pos = -1
+    high_pos = -1
     fret_found = [
         [False, False, False, False],
         [False, False, False, False],
@@ -118,10 +124,10 @@ try:
         # Debounce
         time.sleep(0.1)
 
-        # Write a new fret low, or advance to final step
-        low_pos = (low_pos + 1) % 5
+        # Write a new fret high, or advance to final step
+        high_pos = (high_pos + 1) % 5
 
-        if low_pos == 4:
+        if high_pos == 4:
             last_fret_found = fret_found
 
             # We have completed a scan
@@ -177,20 +183,20 @@ try:
         else:
             # Scan to next fret
             for pos, fret_pin in enumerate(fret_pins):
-                print(f"fret {fret_pin} low")
-                if pos == low_pos:
-                    gpio.output(fret_pin, gpio.LOW)
-                else:
+                print(f"fret {fret_pin} high")
+                if pos == high_pos:
                     gpio.output(fret_pin, gpio.HIGH)
+                else:
+                    gpio.output(fret_pin, gpio.LOW)
 
-            # Read the input from the mini guitar neck (float high, active low, due to pull-up)
+            # Read the input from the mini guitar neck
             for i in range(6):
                 inp = string_inputs[i]
                 if gpio.input(inp):
                     print(f"string {i} pressed!")
-                    fret_found[i][low_pos] = True
+                    fret_found[i][high_pos] = True
                 else:
-                    fret_found[i][low_pos] = False
+                    fret_found[i][high_pos] = False
 
 except KeyboardInterrupt:
     spi.close()
