@@ -14,11 +14,12 @@ ISR(SPI_STC_vect) {
   receivedData = SPDR;
   SPDR = 10;
   Serial.println("here");
+  Serial.println(receivedData);
 }
 
 void setupSPI(void) {
-  // SPI.begin();
-  SPI.beginTransaction(SPISettings(5000, MSBFIRST, SPI_MODE0));
+  SPI.begin();
+  // SPI.beginTransaction(SPISettings(5000, MSBFIRST, SPI_MODE0));
 
   SPCR |= _BV(SPE); // turn on SPI in slave mode
   pinMode(MISO, OUTPUT);
