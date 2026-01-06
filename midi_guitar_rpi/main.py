@@ -136,6 +136,7 @@ try:
                 read = 255
                 while read > 100:
                     read = spi.xfer2([0])[0]
+                    time.sleep(0.01)
 
                 # Figure out which response is position and which is bend
                 if 0 <= read <= 5:
@@ -171,9 +172,9 @@ try:
             for note_index in note_indices:
                 # send the MIDI note, modified by neck position and any bend
                 print(f"playing note {midi_notes[note_index]}")
-                midi.send(mido.Message('note_on', note=midi_notes[note_index] + 4 * position + bend * MULTIPLIER, velocity=120))
+                midi.send(mido.Message('note_on', note=into(midi_notes[note_index] + 4 * position + bend * MULTIPLIER), velocity=120))
                 time.sleep(0.1)
-                midi.send(mido.Message('note_off', note=midi_notes[note_index] + 4 * position + bend * MULTIPLIER))
+                midi.send(mido.Message('note_off', note=int(midi_notes[note_index] + 4 * position + bend * MULTIPLIER)))
 
             last_fret_found = copy.deepcopy(fret_found)
 
