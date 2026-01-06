@@ -18,7 +18,7 @@ Adafruit_LSM303_Accel_Unified accel = Adafruit_LSM303_Accel_Unified(54321);
 int Y_SENSITIVITY = 10;
 int X_SENSITIVITY = 10;
 
-int MULTIPLIER = 1;
+int MULTIPLIER = 5;
 
 int position = 0;
 bool pos = true;
