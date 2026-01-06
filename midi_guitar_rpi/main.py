@@ -128,17 +128,20 @@ try:
             # Here we check if multiple fret positions are contacted,
             # or if multiple notes are played i.e. in a chord
 
-            # Read from SPI twice
-            read_one = spi.xfer2([0])[0]
-            read_two = spi.xfer2([0])[0]
+            # Read from SPI twice... it takes a few tries
+            bend = None
+            position = None
 
-            # Figure out which response is position and which is bend
-            if (0 <= read_one <= 5):
-                bend = read_two
-                position = read_one
-            elif (6 <= read_one <= 100):
-                bend = read_one
-                position = read_two
+            while (bend is None) or (position is None):
+                read = 255
+                while read > 100:
+                    read = spi.xfer2([0])[0]
+
+                # Figure out which response is position and which is bend
+                if 0 <= read <= 5:
+                    position = read
+                else:
+                    bend = read
 
             # Check for multiple fret contacts
             note_indices = []
