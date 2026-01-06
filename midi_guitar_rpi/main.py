@@ -12,18 +12,12 @@ bend = 0
 
 # SPI SETUP
 
-CE0 = 24
-CE1 = 26
-MOSI = 19
-MISO = 21
-SCLK = 23
-
 # Open SPI bus 0, device (CS) 0
 spi = spidev.SpiDev()
 spi.open(0, 0)
 
 # Set SPI speed and mode
-spi.max_speed_hz = 50000
+spi.max_speed_hz = 5000
 spi.mode = 0
 
 #  MIDI setup as MIDI out device
@@ -135,8 +129,8 @@ try:
             # or if multiple notes are played i.e. in a chord
 
             # Read from SPI twice
-            read_one = ord(spi.xfer2(["/r"]))
-            read_two = ord(spi.xfer2(["/r"]))
+            read_one = spi.xfer2([0])[0]
+            read_two = spi.xfer2([0])[0]
 
             # Figure out which response is position and which is bend
             if (0 <= read_one <= 5):

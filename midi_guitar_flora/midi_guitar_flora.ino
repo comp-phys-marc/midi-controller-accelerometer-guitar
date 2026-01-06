@@ -109,17 +109,15 @@ ISR(SPI_STC_vect) {
 }
 
 void setupSPI(void) {
-  SPI.beginTransaction(SPISettings(50000, MSBFIRST, SPI_MODE0));
+  SPI.beginTransaction(SPISettings(5000, MSBFIRST, SPI_MODE0));
 
   SPCR |= _BV(SPE); // turn on SPI in slave mode
+  pinMode(MISO, OUTPUT);
+  pinMode(MOSI, INPUT);
+  pinMode(SCK, INPUT);
   SPI.attachInterrupt(); // turn on interrupt
 
-  pinMode(DATAOUT, OUTPUT);
-  pinMode(DATAIN, INPUT);
-  pinMode(SPICLOCK, OUTPUT);
-  pinMode(CHIPSELECT, OUTPUT);
-
-  digitalWrite(CHIPSELECT, LOW);  // enable device
+  pinMode(SS, INPUT);
 }
 
 void positionAndBend(float x, float y) {
@@ -137,9 +135,7 @@ void positionAndBend(float x, float y) {
     } else if (position < 0) {
       position = 0;
     }
-    position = int(position);
-
-    SPI.transfer(char(position));
+    SPDR = int(position);
 
   } else {
     int extent = 0;
@@ -158,9 +154,7 @@ void positionAndBend(float x, float y) {
     } else if (extent < 6) {
       extent = 6;
     }
-    extent = int(extent);
-
-    SPI.transfer(char(extent));
+    SPDR = int(extent);
   }
 }
 
