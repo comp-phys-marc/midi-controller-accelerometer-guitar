@@ -8,9 +8,9 @@ Adafruit_LSM303_Accel_Unified accel = Adafruit_LSM303_Accel_Unified(54321);
 
 /* Z should correspond to walking back and forth. X for bends and Y for changing fret positions. */
 
-/* TODO: fine tune sensor sensitivities. */
-int Y_SENSITIVITY = 10;
-int X_SENSITIVITY = 10;
+int NEGATIVE_Y_SENSITIVITY = 0;
+int POSITIVE_Y_SENSITIVITY = 10;
+int X_SENSITIVITY = 5;
 
 int MULTIPLIER = 5;
 
@@ -118,9 +118,9 @@ void setupSPI(void) {
 void positionAndBend(float x, float y) {
   if (pos) {
     /* Negative y dimension increases fret position. */
-    if (y > Y_SENSITIVITY) {
+    if (y > POSITIVE_Y_SENSITIVITY) {
       position = position - 1;
-    } else if (y < - Y_SENSITIVITY) {
+    } else if (y < - NEGATIVE_Y_SENSITIVITY) {
       position = position + 1;
     }
 
