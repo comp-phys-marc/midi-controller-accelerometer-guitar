@@ -4,7 +4,6 @@ import copy
 import RPi.GPIO as gpio
 import mido
 
-# TODO: calibrate bend multiplier
 MULTIPLIER = 1 / 50
 
 position = 0
@@ -116,30 +115,37 @@ try:
 
     while True:
         # Debounce
-        time.sleep(0.1)
+        time.sleep(0.01)
 
         # Write a new fret high, or advance to final step
         high_pos = (high_pos + 1) % 5
 
         if high_pos == 4:
-            last_fret_found = fret_found
 
             # We have completed a scan
             # Here we check if multiple fret positions are contacted,
             # or if multiple notes are played i.e. in a chord
 
-            # Read from SPI twice... it takes a few tries
+            # Read from SPI... it takes a few tries
+            last_position = position
+            last_bend = bend
             bend = None
             position = None
 
             while (bend is None) or (position is None):
                 read = 255
-                while read > 100:
+                tries = 0
+                while read > 100 and tries < 10:
                     read = spi.xfer2([0])[0]
                     time.sleep(0.01)
+                    tries += 1
+                
+                if tries == 10:
+                    position = last_position
+                    bend = 0
 
                 # Figure out which response is position and which is bend
-                if 0 <= read <= 5:
+                elif 0 <= read <= 5:
                     position = read
                 else:
                     bend = read
@@ -171,8 +177,7 @@ try:
             # If a note is pressed...
             for note_index in note_indices:
                 # send the MIDI note, modified by neck position and any bend
-                print(f"playing note {midi_notes[note_index]}")
-                midi.send(mido.Message('note_on', note=into(midi_notes[note_index] + 4 * position + bend * MULTIPLIER), velocity=120))
+                midi.send(mido.Message('note_on', note=int(midi_notes[note_index] + 4 * position + bend * MULTIPLIER), velocity=120))
                 time.sleep(0.1)
                 midi.send(mido.Message('note_off', note=int(midi_notes[note_index] + 4 * position + bend * MULTIPLIER)))
 
@@ -181,7 +186,6 @@ try:
         else:
             # Scan to next fret
             for pos, fret_pin in enumerate(fret_pins):
-                print(f"fret {fret_pin} high")
                 if pos == high_pos:
                     gpio.output(fret_pin, gpio.HIGH)
                 else:
@@ -191,7 +195,6 @@ try:
             for i in range(6):
                 inp = string_inputs[i]
                 if gpio.input(inp):
-                    print(f"string {i} pressed!")
                     fret_found[i][high_pos] = True
                 else:
                     fret_found[i][high_pos] = False

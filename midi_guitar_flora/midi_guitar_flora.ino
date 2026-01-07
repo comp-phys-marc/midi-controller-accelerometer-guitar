@@ -3,12 +3,6 @@
 #include <Wire.h>
 #include <SPI.h>
 
-/* TODO: double check the pin ordering. */
-#define DATAOUT 10 // MISO
-#define DATAIN  9 // MOSI
-#define SPICLOCK  11 // sck
-#define CHIPSELECT 8 // ss
-
 /* Assign a unique ID to this sensor at the same time */
 Adafruit_LSM303_Accel_Unified accel = Adafruit_LSM303_Accel_Unified(54321);
 
@@ -109,7 +103,8 @@ ISR(SPI_STC_vect) {
 }
 
 void setupSPI(void) {
-  SPI.beginTransaction(SPISettings(5000, MSBFIRST, SPI_MODE0));
+  SPI.begin();
+  // SPI.beginTransaction(SPISettings(5000, MSBFIRST, SPI_MODE0));
 
   SPCR |= _BV(SPE); // turn on SPI in slave mode
   pinMode(MISO, OUTPUT);
