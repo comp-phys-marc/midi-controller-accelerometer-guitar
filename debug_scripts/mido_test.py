@@ -6,8 +6,7 @@ import time
 # List available output ports (optional, for verification)
 print("Available MIDI output ports:", mido.get_output_names())
 
-# Open the FluidSynth port. The name might vary, but usually contains 'FluidSynth'
-# You may need to adjust this name based on the output of mido.get_output_names()
+# Open the FluidSynth port.
 try:
     outport = mido.open_output(mido.get_output_names()[1]) 
 except IOError:

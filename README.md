@@ -28,7 +28,7 @@ Next, run `main.py` on the Pi.
 # Project Status
 
 > [!WARNING]  
-> This is still in debug mode! While the basics work, it is a little finicky to play.
+> While the basics work, it is a little finicky to play. This software is provided with no guarantees or warranties of any kind.
 
 # Photos
 
