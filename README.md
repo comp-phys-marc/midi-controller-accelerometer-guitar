@@ -41,6 +41,6 @@ Next, run `main.py` on the Pi.
 
 ![signal-2025-12-29-210033](https://github.com/user-attachments/assets/33b4c451-1a4a-4857-acd1-b6221ea26c6a)
 
-![signal-2026-01-11-124601_004](https://github.com/user-attachments/assets/a7f92a47-b70f-432e-8172-b08182e869ad)
-
 ![signal-2025-12-29-210028](https://github.com/user-attachments/assets/cf7c0b90-d2d2-4f73-86f5-48594a28ce34)
+
+![bafkreiavxe2gvdpn62q5flh4vmx7wurv5pycjisftfgn4kfu44s2i55m6a](https://github.com/user-attachments/assets/b1c11220-342e-4526-bdb7-771ab4b88f3f)
