@@ -2,6 +2,13 @@
 
 This repository contains code for a custom MIDI controller made from a piece of pine wood, a Raspberry Pi 2, wearable Adafruit Flora and a LSM303 accelerometer module.
 
+# Hardware
+
+Aside from the custom fretboard, neck and head made from pine, the project uses several electrical components, connected in the following manner.
+
+<img width="773" height="585" alt="schem0" src="https://github.com/user-attachments/assets/0928d74b-6ff2-44f9-8610-542792296bf4" />
+<img width="807" height="603" alt="schem1" src="https://github.com/user-attachments/assets/f6ee2448-8a7f-40e1-8e01-9c2522f6e4a6" />
+
 # Software
 
 ## Flora + Accelerometer
@@ -34,6 +41,6 @@ Next, run `main.py` on the Pi.
 
 ![signal-2025-12-29-210033](https://github.com/user-attachments/assets/33b4c451-1a4a-4857-acd1-b6221ea26c6a)
 
-![signal-2025-12-29-210031](https://github.com/user-attachments/assets/96dcfaa6-8937-4e93-bdbb-2470fb5bc91c)
-
 ![signal-2025-12-29-210028](https://github.com/user-attachments/assets/cf7c0b90-d2d2-4f73-86f5-48594a28ce34)
+
+![bafkreiavxe2gvdpn62q5flh4vmx7wurv5pycjisftfgn4kfu44s2i55m6a](https://github.com/user-attachments/assets/b1c11220-342e-4526-bdb7-771ab4b88f3f)
