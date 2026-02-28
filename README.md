@@ -2,6 +2,8 @@
 
 This repository contains code for a custom MIDI controller made from a piece of pine wood, a Raspberry Pi 2, wearable Adafruit Flora and a LSM303 accelerometer module.
 
+Winner of a runner-up prize in the Instructables Anything Goes Contest! Find the Instructable [here](https://www.instructables.com/Raspberry-Pi-and-Flora-Based-Guitar-MIDI-Controlle/).
+
 # Hardware
 
 Aside from the custom fretboard, neck and head made from pine, the project uses several electrical components, connected in the following manner.
